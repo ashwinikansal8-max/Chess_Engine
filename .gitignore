@@ -1,0 +1,15 @@
+# IntelliJ files
+.idea/
+*.iml
+
+# Java compiled files
+*.class
+
+# Build output
+out/
+target/
+build/
+
+# System files
+.DS_Store
+Thumbs.db
