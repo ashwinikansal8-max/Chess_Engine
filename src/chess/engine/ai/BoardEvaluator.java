@@ -8,6 +8,12 @@ public class BoardEvaluator {
 
     public int evaluate(final Board board) {
         final Player player = board.getCurrentPlayer();
+        if (player.isInCheckMate()) {
+            return -100_000;
+        }
+        if (player.isInStaleMate()) {
+            return 0;
+        }
         return score(player) - score(player.getOpponent());
     }
 

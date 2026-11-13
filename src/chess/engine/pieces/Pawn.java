@@ -33,7 +33,11 @@ public class Pawn extends Piece {
         if (!board.getTile(oneStep).isTileOccupied()) {
             legalMoves.add(createPushMove(board, oneStep));
             final int twoSteps = oneStep + rowStep;
-            if (this.isFirstMove && !board.getTile(twoSteps).isTileOccupied()) {
+            final int startingRow = this.pieceAlliance.isWhite() ? 6 : 1;
+            if (this.isFirstMove
+                    && BoardUtils.getRow(this.piecePosition) == startingRow
+                    && BoardUtils.isValidTileCoordinate(twoSteps)
+                    && !board.getTile(twoSteps).isTileOccupied()) {
                 legalMoves.add(new Move.PawnJump(board, this, twoSteps));
             }
         }

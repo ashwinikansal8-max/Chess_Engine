@@ -9,6 +9,16 @@
 out/
 target/
 build/
+dist/
+
+# Packaged application output
+*.msi
+*.exe
+*.app/
+
+# IDE/editor and local logs
+.vscode/
+*.log
 
 # System files
 .DS_Store

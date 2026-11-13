@@ -1,0 +1,101 @@
+.app-root {
+    -fx-background-color: #1d2424;
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+.app-title {
+    -fx-text-fill: #f1eee5;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 3px;
+}
+
+.app-subtitle {
+    -fx-text-fill: #aab4ae;
+    -fx-font-size: 13px;
+}
+
+.status-pill {
+    -fx-background-color: #35413b;
+    -fx-background-radius: 20px;
+    -fx-text-fill: #cfe3c4;
+    -fx-font-size: 12px;
+    -fx-padding: 7px 13px;
+}
+
+.turn-label {
+    -fx-text-fill: #f1eee5;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.board-area {
+    -fx-background-color: #1d2424;
+}
+
+.chess-board {
+    -fx-background-color: #111817;
+    -fx-border-color: #101615;
+    -fx-border-width: 7px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.38), 22, 0.2, 0, 8);
+}
+
+.coordinate-label {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-fill: rgba(25, 35, 30, 0.76);
+    -fx-padding: 3px;
+}
+
+.side-panel {
+    -fx-background-color: #293231;
+    -fx-background-radius: 14px;
+}
+
+.section-title {
+    -fx-text-fill: #aeb9b1;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1.6px;
+    -fx-padding: 0 0 2px 0;
+}
+
+.player-card {
+    -fx-background-color: #35413e;
+    -fx-background-radius: 8px;
+    -fx-text-fill: #f1eee5;
+    -fx-font-size: 13px;
+    -fx-padding: 12px;
+}
+
+.move-history {
+    -fx-background-color: #232b2a;
+    -fx-background-radius: 8px;
+    -fx-border-color: transparent;
+}
+
+.move-history .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e5e8df;
+    -fx-font-family: "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-padding: 9px;
+}
+
+.move-history .list-cell:filled:selected {
+    -fx-background-color: #3c4a43;
+}
+
+.new-game-button {
+    -fx-background-color: #a6c38b;
+    -fx-background-radius: 8px;
+    -fx-text-fill: #1e2a21;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 12px;
+    -fx-cursor: hand;
+}
+
+.new-game-button:hover {
+    -fx-background-color: #b7d39c;
+}

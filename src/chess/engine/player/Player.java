@@ -16,7 +16,8 @@ public abstract class Player {
 
     protected final Board board;
     protected final King playerKing;
-    protected final Collection<Move> legalMoves;
+    private final Collection<Move> pseudoLegalMoves;
+    private volatile Collection<Move> legalMoves;
     private final boolean isInCheck;
 
     Player(final Board board, final Collection<Move> playerMoves, final Collection<Move> opponentMoves) {
@@ -25,7 +26,7 @@ public abstract class Player {
         this.isInCheck = !calculateAttacksOnTile(this.playerKing.getPiecePosition(), opponentMoves).isEmpty();
         final List<Move> allMoves = new ArrayList<>(playerMoves);
         allMoves.addAll(calculateKingCastles(opponentMoves));
-        this.legalMoves = Collections.unmodifiableList(allMoves);
+        this.pseudoLegalMoves = Collections.unmodifiableList(allMoves);
     }
 
     public abstract Collection<Piece> getActivePieces();
@@ -41,11 +42,27 @@ public abstract class Player {
     }
 
     public Collection<Move> getLegalMoves() {
-        return this.legalMoves;
+        Collection<Move> moves = this.legalMoves;
+        if (moves == null) {
+            synchronized (this) {
+                moves = this.legalMoves;
+                if (moves == null) {
+                    final List<Move> legal = new ArrayList<>();
+                    for (final Move move : this.pseudoLegalMoves) {
+                        if (makeMove(move).getMoveStatus().isDone()) {
+                            legal.add(move);
+                        }
+                    }
+                    moves = Collections.unmodifiableList(legal);
+                    this.legalMoves = moves;
+                }
+            }
+        }
+        return moves;
     }
 
     public boolean isMoveLegal(final Move move) {
-        return this.legalMoves.contains(move);
+        return getLegalMoves().contains(move);
     }
 
     public boolean isInCheck() {
@@ -61,7 +78,8 @@ public abstract class Player {
     }
 
     public MoveTransition makeMove(final Move move) {
-        if (!isMoveLegal(move)) {
+        if (!this.pseudoLegalMoves.contains(move)
+                || move.getAttackedPiece() != null && move.getAttackedPiece().getPieceType().isKing()) {
             return new MoveTransition(this.board, move, MoveStatus.ILLEGAL_MOVE);
         }
 
@@ -69,7 +87,7 @@ public abstract class Player {
         final Player opponentToMove = transitionBoard.getCurrentPlayer();
         final Player moveMaker = opponentToMove.getOpponent();
         final Collection<Move> attacksOnKing = calculateAttacksOnTile(
-                moveMaker.getPlayerKing().getPiecePosition(), opponentToMove.getLegalMoves());
+                moveMaker.getPlayerKing().getPiecePosition(), opponentToMove.pseudoLegalMoves);
 
         if (!attacksOnKing.isEmpty()) {
             return new MoveTransition(this.board, move, MoveStatus.LEAVES_PLAYER_IN_CHECK);
@@ -78,7 +96,7 @@ public abstract class Player {
     }
 
     protected boolean hasEscapeMoves() {
-        for (final Move move : this.legalMoves) {
+        for (final Move move : getLegalMoves()) {
             if (makeMove(move).getMoveStatus().isDone()) {
                 return true;
             }
@@ -108,7 +126,8 @@ public abstract class Player {
     protected static Collection<Move> calculateAttacksOnTile(final int tile, final Collection<Move> moves) {
         final List<Move> attackMoves = new ArrayList<>();
         for (final Move move : moves) {
-            if (tile == move.getDestinationCoordinate()) {
+            if (tile == move.getDestinationCoordinate()
+                    && (move.getMovedPiece().getPieceType() != Piece.PieceType.PAWN || move.isAttack())) {
                 attackMoves.add(move);
             }
         }
