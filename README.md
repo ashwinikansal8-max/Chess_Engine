@@ -40,7 +40,7 @@ The repository retains its original `src/chess/engine` source root; `pom.xml` co
 Install JDK 24 and Maven 3.9 or later, then run:
 
 ```shell
-mvn clean test javafx:run
+mvn clean javafx:run
 ```
 
 Build the application JAR with:
@@ -49,25 +49,27 @@ Build the application JAR with:
 mvn clean package
 ```
 
-## Build a portable application
+## Build and share the Windows installer
 
-The package scripts run the tests, create a custom runtime image containing Java and JavaFX, and use `jpackage` to produce a portable application image:
-
-**Windows PowerShell**
+On Windows, install JDK 24 and Maven 3.9 or later, open PowerShell in the project directory, and run:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\package-windows.ps1
 ```
 
-**Linux or macOS**
+The script runs the JUnit tests, bundles Java and JavaFX into a custom runtime, and uses `jpackage` to create the Windows installer:
 
-```shell
-sh scripts/package-unix.sh
+```text
+target\installer\Chess Engine-1.0.0.msi
 ```
 
-The resulting ZIP is written to `target/`. On Windows, extract `Chess-Engine-windows-x64.zip` and launch `ChessEngine\ChessEngine.exe`. The bundled runtime means the recipient does not need Java, Maven, or IntelliJ installed.
+The installer includes the runtime and offers Start Menu and desktop shortcuts. It installs per-user, allows choosing the installation directory, and uses the bundled application icon. Give the recipient the single `.msi` installer; they do not need Java, Maven, or IntelliJ.
 
-`jpackage` creates native application images for the operating system where it runs. The GitHub Actions workflow builds Windows, Linux, and macOS images on their respective runners; separate platform builds are required, and one platform's package is not a substitute for another's. The workflow currently creates portable images rather than signed installers.
+WiX Toolset v3.14.1 is needed by `jpackage` to build Windows installers. The script downloads the official pinned WiX binary archive on first use and verifies its SHA-256 before extracting it into the local build-tools cache.
+
+## Linux and macOS packages
+
+Run `sh scripts/package-unix.sh` on Linux or macOS to create a runtime-bundled application image ZIP. `jpackage` produces native packages only for the operating system on which it runs; separate Windows, Linux, and macOS builds are required. The GitHub Actions workflow builds each platform separately.
 
 ## Tests
 
@@ -84,5 +86,5 @@ Tests cover initial setup, legal and illegal moves, captures, check, checkmate, 
 - Broader chess conformance coverage, including repetition and move-count draw rules.
 - Choice of underpromotion piece.
 - Stronger search evaluation, transposition tables, and configurable difficulty.
-- Installer signing and application icons for each platform.
+- Installer signing and platform-specific application icons.
 - Add annotated screenshots and expanded accessibility support.

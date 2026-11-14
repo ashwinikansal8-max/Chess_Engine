@@ -26,7 +26,7 @@ jobs:
           distribution: temurin
           java-version: "24"
           cache: maven
-      - name: Build Windows portable application
+      - name: Build Windows installer
         if: matrix.platform == 'windows'
         shell: pwsh
         run: ./scripts/package-windows.ps1
@@ -34,6 +34,13 @@ jobs:
         if: matrix.platform != 'windows'
         run: sh scripts/package-unix.sh
       - uses: actions/upload-artifact@v4
+        if: matrix.platform == 'windows'
+        with:
+          name: chess-engine-${{ matrix.platform }}
+          path: target/installer/*.msi
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: matrix.platform != 'windows'
         with:
           name: chess-engine-${{ matrix.platform }}
           path: target/Chess-Engine-*.zip
@@ -53,4 +60,6 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: release-assets/Chess-Engine-*.zip
+          files: |
+            release-assets/Chess-Engine-*.zip
+            release-assets/Chess*Engine-*.msi
